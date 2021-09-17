@@ -1,2 +1,14 @@
 .git/
 .idea/
+**/obj
+**/bin
+obj
+bin
+obj/
+bin/
+*.suo
+*.user
+_ReSharper.*
+bin
+obj
+packages
