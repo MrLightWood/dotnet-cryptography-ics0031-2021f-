@@ -40,7 +40,7 @@ namespace HW1
                 Console.WriteLine("D) Decrypt");
                 Console.WriteLine("X) Back");
                 userChoice += Console.ReadLine()?.Trim().ToUpper();
-                if (userChoice == "X") { continue; }
+                if (userChoice[1] is 'X') { continue; }
                 Console.Clear();
                 string output;
                 switch (userChoice)
@@ -258,8 +258,7 @@ namespace HW1
             Console.Write("Please enter ciphertext:");
             var ciphertext = Console.ReadLine() ?? "";
             var extendedSecretKey = ExtendKey(secretKey, ciphertext);
-            Console.WriteLine(ciphertext.Length);
-            Console.WriteLine(extendedSecretKey.Length);
+
             var plaintext = "";
             
             for (int i = 0; i < ciphertext.Length; i++)
@@ -280,13 +279,7 @@ namespace HW1
 
                 plaintext += base64Alphabet[chrIndex];
             }
-            /*
-            var utf8 = new UTF8Encoding();
-            var utf8Bytes = utf8.GetBytes(plaintext);
-            var base64Str = System.Convert.ToBase64String(utf8Bytes);
 
-            var plaintext = "";
-*/
             plaintext = Base64Decode(plaintext);
             Console.WriteLine();
             
