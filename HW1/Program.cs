@@ -6,65 +6,178 @@ namespace HW1
 {
     class Program
     {
-        private static string base64Alphabet =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-            "abcdefghijklmnopqrstuvwxyz" +
-            "0123456789" +
-            "+/="; // and "=" as filler
+        private const string Base64Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz" + "0123456789" + "+/="; // and "=" as filler
 
-        
+        private static string _userFirstChoice = "";
+        private static string _userSecondChoice = "";
+        private static string _userFinalChoice = "";
+        private static string _userContinue = "";
+
+        private enum MenuKey
+        {
+            Continue,
+            Back,
+            ToMainMenu,
+            Exit
+        }
         static void Main(string[] args)
         {
-            string userChoice;
+            MenuKey resultKey;
             do
             {
+                resultKey = MenuStart();
+            } while (resultKey is not MenuKey.Exit);
+        }
+
+        private static MenuKey MenuStart()
+        {
+            do
+            {
+                Console.WriteLine();
                 Console.WriteLine("<==== CAESAR AND VIGENERE ENCRYPTION AND DECRYPTION ====>");
                 Console.WriteLine("C) Caesar");
                 Console.WriteLine("V) Vigenere");
-                Console.WriteLine("X) Exit");
+                Console.WriteLine("X) Exit program");
                 Console.WriteLine("-----------------");
                 Console.Write("Your choice:");
                 
-                userChoice = Console.ReadLine()?.Trim().ToUpper();
+                //_userFirstChoice = GetMenuInput();
+                _userFirstChoice = GetInput();
+                if (!IsMenuInputValid(_userFirstChoice)) continue;
+                if (!CheckValidOptions(_userFirstChoice, "CVX"))
+                {
+                    Console.WriteLine($"The choice {_userFirstChoice} is not valid");
+                    continue;
+                }
+                if(_userFirstChoice is "X" or "x") { break; }
+            } while (!CheckValidOptions(_userFirstChoice, "CVX"));
+            
+            var returnKey = MenuEncryptOrDecrypt();
+            return returnKey;
+        }
+        
+        private static MenuKey MenuEncryptOrDecrypt()
+        {
+            MenuKey shouldContinue;
+            do
+            {
+                do
+                {
+                    Console.WriteLine("-----------------");
+                    Console.WriteLine("Do you want to Encrypt or Decrypt: ");
+                    Console.WriteLine("E) Encrypt");
+                    Console.WriteLine("D) Decrypt");
+                    Console.WriteLine("X) Back");
+                    Console.WriteLine("-----------------");
+                    Console.Write("Your choice:");
 
-                if (userChoice is not ("C" or "V" or "X"))
-                {
-                    Console.WriteLine($"The choice {userChoice} is not valid");
-                }
-                if(userChoice is "X" or "x") { break; }
+                    //_userSecondChoice = Console.ReadLine()?.Trim().ToUpper() ?? "";
+                    _userSecondChoice = GetInput();
+                    if (!IsMenuInputValid(_userSecondChoice)) continue;
+                    
+                    if (!CheckValidOptions(_userSecondChoice, "EDX"))
+                    {
+                        Console.WriteLine($"The choice {_userSecondChoice} is not valid");
+                    }
+                } while (!CheckValidOptions(_userSecondChoice, "EDX"));
+
+                if (_userSecondChoice.Equals("X")) return MenuKey.Back;
                 
-                Console.Clear();
-                Console.WriteLine("-----------------");
-                Console.Write("Do you want to Encrypt or Decrypt: \n");
-                Console.WriteLine("E) Encrypt");
-                Console.WriteLine("D) Decrypt");
-                Console.WriteLine("X) Back");
-                userChoice += Console.ReadLine()?.Trim().ToUpper();
-                if (userChoice[1] is 'X') { continue; }
-                Console.Clear();
-                string output;
-                switch (userChoice)
+                _userFinalChoice = _userFirstChoice + _userSecondChoice;
+                var algorithmOutput = _userFinalChoice switch
                 {
-                    case "CE":
-                        output = CaesarEncrypt();
-                        break;
-                    case "CD":
-                        output = CaesarDecrypt();
-                        break;
-                    case "VE":
-                        output = VigenereEncrypt();
-                        break;
-                    case "VD":
-                        output = VigenereDecrypt();
-                        break;
-                    default: 
-                        Console.WriteLine($"The choice {userChoice[1]} is not valid");
-                        continue;
+                    "CE" => CaesarEncrypt(),
+                    "CD" => CaesarDecrypt(),
+                    "VE" => VigenereEncrypt(),
+                    "VD" => VigenereDecrypt(),
+                    _ => ""
+                };
+                Console.WriteLine();
+                Console.WriteLine($"Your encrypted text is: {algorithmOutput}");
+                Console.WriteLine();
+                shouldContinue = MenuContinueAlgorithm();
+            } while (shouldContinue is not(MenuKey.ToMainMenu or MenuKey.Exit));
+            
+            return shouldContinue;
+        }
+        
+        private static MenuKey MenuContinueAlgorithm()
+        {
+            do
+            {
+                var algorithm = _userFirstChoice.Equals("C") ? "Caesar" : "Vigenere";
+                Console.WriteLine("-----------------");
+                Console.WriteLine($"Do you want to Continue with {algorithm} algorithm?");
+                Console.WriteLine("Y) Yes, let's continue");
+                Console.WriteLine("N) No, go back to main menu");
+                Console.WriteLine("X) Exit program");
+                Console.WriteLine("-----------------");
+                Console.Write("Your choice:");
+
+                _userContinue = GetInput();
+                if (!IsMenuInputValid(_userContinue)) continue;
+
+                if (!CheckValidOptions(_userContinue, "YNX"))
+                {
+                    Console.WriteLine($"The choice {_userContinue} is not valid");
                 }
-                Console.WriteLine("Your output is: " + output);
-            } while (userChoice != "X");
+
+            } while (!CheckValidOptions(_userContinue, "YNX"));
+
+            return _userContinue switch
+            {
+                "Y" => MenuKey.Continue,
+                "N" => MenuKey.ToMainMenu,
+                "X" => MenuKey.Exit,
+                _ => MenuKey.Exit
+            };
         }
 
+        private static bool CheckValidOptions(string input, string options)
+        {
+            return input.Length != 0 && options.Contains(input);
+        }
+        
+        private static string GetInput()
+        {
+            return Console.ReadLine()?.Trim().ToUpper() ?? "";
+            /*
+            string input;
+            do
+            {
+                Console.WriteLine("-----------------");
+                Console.Write("Your choice:");
+                input = Console.ReadLine()?.Trim().ToUpper() ?? "";
+            } while (!IsMenuInputValid(input));
+            
+            return IsMenuInputValid(input) ? input : "";
+            */
+        }
+        
+        private static bool IsMenuInputValid(string input)
+        {
+            Console.WriteLine();
+            switch (input.Length)
+            {
+                case 0:
+                    Console.WriteLine("Your input is empty, please try again");
+                    Console.WriteLine();
+                    return false;
+                case > 1:
+                    Console.WriteLine("Please, provide only one character");
+                    Console.WriteLine();
+                    return false;
+            }
+            if (int.TryParse(input, out _))
+            {
+                Console.WriteLine("Numbers are not accepted, please try again");
+                return false;
+            }
+
+            Console.WriteLine();
+            return true;
+        }
+        
         private static string CaesarEncrypt()
         {
             Console.WriteLine("========== Cesar Encryption ===========");
@@ -87,7 +200,7 @@ namespace HW1
                 }
             } while (!inputIsValid);
 
-            shiftAmount %= base64Alphabet.Length;
+            shiftAmount %= Base64Alphabet.Length;
 
             Console.WriteLine($"Cesar shift amount: {shiftAmount}");
 
@@ -103,18 +216,18 @@ namespace HW1
             for (int i = 0; i < base64Str.Length; i++)
             {
                 var b64Chr = base64Str[i];
-                var chrIndex = base64Alphabet.IndexOf(b64Chr);
+                var chrIndex = Base64Alphabet.IndexOf(b64Chr);
                 chrIndex += shiftAmount;
                 if (chrIndex < 0)
                 {
-                    chrIndex = base64Alphabet.Length + chrIndex;
+                    chrIndex = Base64Alphabet.Length + chrIndex;
                 }
-                else if (chrIndex > (base64Alphabet.Length - 1))
+                else if (chrIndex > (Base64Alphabet.Length - 1))
                 {
-                    chrIndex = chrIndex - (base64Alphabet.Length );
+                    chrIndex = chrIndex - (Base64Alphabet.Length );
                 }
 
-                ciphertext += base64Alphabet[chrIndex];
+                ciphertext += Base64Alphabet[chrIndex];
             }
             Console.WriteLine();
             
@@ -143,7 +256,7 @@ namespace HW1
                 }
             } while (!inputIsValid);
 
-            shiftAmount = shiftAmount % base64Alphabet.Length;
+            shiftAmount = shiftAmount % Base64Alphabet.Length;
 
             Console.WriteLine($"Cesar shift amount: {shiftAmount}");
 
@@ -155,22 +268,24 @@ namespace HW1
             for (int i = 0; i < ciphertext.Length; i++)
             {
                 var b64Chr = ciphertext[i];
-                var chrIndex = base64Alphabet.IndexOf(b64Chr);
+                var chrIndex = Base64Alphabet.IndexOf(b64Chr);
                 chrIndex -= shiftAmount;
                 if (chrIndex < 0)
                 {
-                    chrIndex = base64Alphabet.Length + chrIndex;
+                    chrIndex = Base64Alphabet.Length + chrIndex;
                 }
-                else if (chrIndex > (base64Alphabet.Length - 1))
+                else if (chrIndex > (Base64Alphabet.Length - 1))
                 {
-                    chrIndex -= (base64Alphabet.Length );
+                    chrIndex -= (Base64Alphabet.Length );
                 }
 
-                plaintext += base64Alphabet[chrIndex];
+                plaintext += Base64Alphabet[chrIndex];
             }
             Console.WriteLine();
-            plaintext = Base64Decode(plaintext);
-            return plaintext;
+            bool isCipherTextOkay;
+            
+            (isCipherTextOkay, plaintext) = Base64Decode(plaintext);
+            return !isCipherTextOkay ? "" : plaintext;
         }
         private static string VigenereEncrypt()
         {
@@ -211,19 +326,19 @@ namespace HW1
             {
                 var b64Chr = base64Str[i];
                 var keyChr = extendedSecretKey[i];
-                var chrIndex = base64Alphabet.IndexOf(b64Chr);
-                var keyChrIndex = base64Alphabet.IndexOf(keyChr);
+                var chrIndex = Base64Alphabet.IndexOf(b64Chr);
+                var keyChrIndex = Base64Alphabet.IndexOf(keyChr);
                 chrIndex += keyChrIndex;
                 if (chrIndex < 0)
                 {
-                    chrIndex = base64Alphabet.Length + chrIndex;
+                    chrIndex = Base64Alphabet.Length + chrIndex;
                 }
-                else if (chrIndex > (base64Alphabet.Length - 1))
+                else if (chrIndex > (Base64Alphabet.Length - 1))
                 {
-                    chrIndex = chrIndex - (base64Alphabet.Length );
+                    chrIndex = chrIndex - (Base64Alphabet.Length );
                 }
 
-                ciphertext += base64Alphabet[chrIndex];
+                ciphertext += Base64Alphabet[chrIndex];
             }
             Console.WriteLine();
             
@@ -265,30 +380,41 @@ namespace HW1
             {
                 var b64Chr = ciphertext[i];
                 var keyChr = extendedSecretKey[i];
-                var chrIndex = base64Alphabet.IndexOf(b64Chr);
-                var keyChrIndex = base64Alphabet.IndexOf(keyChr);
+                var chrIndex = Base64Alphabet.IndexOf(b64Chr);
+                var keyChrIndex = Base64Alphabet.IndexOf(keyChr);
                 chrIndex -= keyChrIndex;
                 if (chrIndex < 0)
                 {
-                    chrIndex = base64Alphabet.Length + chrIndex;
+                    chrIndex = Base64Alphabet.Length + chrIndex;
                 }
-                else if (chrIndex > (base64Alphabet.Length - 1))
+                else if (chrIndex > (Base64Alphabet.Length - 1))
                 {
-                    chrIndex -= (base64Alphabet.Length );
+                    chrIndex -= (Base64Alphabet.Length );
                 }
 
-                plaintext += base64Alphabet[chrIndex];
+                plaintext += Base64Alphabet[chrIndex];
+            }
+            Console.WriteLine();
+            bool isCipherTextOkay;
+            (isCipherTextOkay, plaintext) = Base64Decode(plaintext);
+            return !isCipherTextOkay ? "" : plaintext;
+        }
+
+        private static (bool, string) Base64Decode(string base64EncodedData)
+        {
+            string result;
+            try
+            {
+                var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+                result = Encoding.UTF8.GetString(base64EncodedBytes);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Looks like your ciphertext is wrong");
+                return (false, "");    
             }
 
-            plaintext = Base64Decode(plaintext);
-            Console.WriteLine();
-            
-            return plaintext;
-        }
-        
-        public static string Base64Decode(string base64EncodedData) {
-            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
-            return Encoding.UTF8.GetString(base64EncodedBytes);
+            return (true, result);
         }
         private static bool IsBase64Chars(string base64)
         {
