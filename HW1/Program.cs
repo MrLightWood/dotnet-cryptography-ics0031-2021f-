@@ -49,9 +49,8 @@ namespace HW1
                     Console.WriteLine($"The choice {_userFirstChoice} is not valid");
                     continue;
                 }
-                if(_userFirstChoice is "X" or "x") { break; }
             } while (!CheckValidOptions(_userFirstChoice, "CVX"));
-            
+            if(_userFirstChoice is "X" or "x") { return MenuKey.Exit; }
             var returnKey = MenuEncryptOrDecrypt();
             return returnKey;
         }
@@ -141,17 +140,6 @@ namespace HW1
         private static string GetInput()
         {
             return Console.ReadLine()?.Trim().ToUpper() ?? "";
-            /*
-            string input;
-            do
-            {
-                Console.WriteLine("-----------------");
-                Console.Write("Your choice:");
-                input = Console.ReadLine()?.Trim().ToUpper() ?? "";
-            } while (!IsMenuInputValid(input));
-            
-            return IsMenuInputValid(input) ? input : "";
-            */
         }
         
         private static bool IsMenuInputValid(string input)
