@@ -25,7 +25,7 @@ namespace HW1
             MenuKey resultKey;
             do
             {
-                resultKey = MenuStart();
+                resultKey = MenuStart(); //Menu starts and the loop goes until it gets Exit key
             } while (resultKey is not MenuKey.Exit);
         }
 
@@ -41,13 +41,11 @@ namespace HW1
                 Console.WriteLine("-----------------");
                 Console.Write("Your choice:");
                 
-                //_userFirstChoice = GetMenuInput();
                 _userFirstChoice = GetInput();
                 if (!IsMenuInputValid(_userFirstChoice)) continue;
                 if (!CheckValidOptions(_userFirstChoice, "CVX"))
                 {
                     Console.WriteLine($"The choice {_userFirstChoice} is not valid");
-                    continue;
                 }
             } while (!CheckValidOptions(_userFirstChoice, "CVX"));
             if(_userFirstChoice is "X" or "x") { return MenuKey.Exit; }
@@ -70,7 +68,6 @@ namespace HW1
                     Console.WriteLine("-----------------");
                     Console.Write("Your choice:");
 
-                    //_userSecondChoice = Console.ReadLine()?.Trim().ToUpper() ?? "";
                     _userSecondChoice = GetInput();
                     if (!IsMenuInputValid(_userSecondChoice)) continue;
                     
@@ -132,17 +129,17 @@ namespace HW1
             };
         }
 
-        private static bool CheckValidOptions(string input, string options)
+        private static bool CheckValidOptions(string input, string options) //This function checks if the key is valid for current menu options
         {
             return input.Length != 0 && options.Contains(input);
         }
         
-        private static string GetInput()
+        private static string GetInput() //This function gets and returns the input or empty string in case of null
         {
             return Console.ReadLine()?.Trim().ToUpper() ?? "";
         }
         
-        private static bool IsMenuInputValid(string input)
+        private static bool IsMenuInputValid(string input) //Check if input is a valid menu choice
         {
             Console.WriteLine();
             switch (input.Length)
@@ -388,7 +385,7 @@ namespace HW1
             return !isCipherTextOkay ? "" : plaintext;
         }
 
-        private static (bool, string) Base64Decode(string base64EncodedData)
+        private static (bool, string) Base64Decode(string base64EncodedData) //Decodes Base64 to UTF-8 String
         {
             string result;
             try
@@ -404,13 +401,13 @@ namespace HW1
 
             return (true, result);
         }
-        private static bool IsBase64Chars(string base64)
+        private static bool IsBase64Chars(string base64) //Checks if a string contains only base64 characters
         {
             base64 = base64.Trim();
             return Regex.IsMatch(base64, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
         }
 
-        private static string ExtendKey(string key, string plainText)
+        private static string ExtendKey(string key, string plainText) //Extends key for vigenere algorithm.
         {
             if (key.Length == plainText.Length) { return key; }
             StringBuilder builder;
