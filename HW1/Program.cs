@@ -12,6 +12,7 @@ namespace HW1
         private static string _userSecondChoice = "";
         private static string _userFinalChoice = "";
         private static string _userContinue = "";
+        private static int _failsCount;
 
         private enum MenuKey
         {
@@ -41,13 +42,14 @@ namespace HW1
                 Console.WriteLine("-----------------");
                 Console.Write("Your choice:");
                 
-                _userFirstChoice = GetInput();
-                if (!IsMenuInputValid(_userFirstChoice)) continue;
+                _userFirstChoice = GetMenuInput();
+                if (!IsMenuInputValid(_userFirstChoice, true)) continue;
                 if (!CheckValidOptions(_userFirstChoice, "CVX"))
                 {
                     Console.WriteLine($"The choice {_userFirstChoice} is not valid");
                 }
-            } while (!CheckValidOptions(_userFirstChoice, "CVX"));
+            } while (!CheckValidOptions(_userFirstChoice, "CVX") || !IsMenuInputValid(_userFirstChoice, false));
+
             if(_userFirstChoice is "X" or "x") { return MenuKey.Exit; }
             var returnKey = MenuEncryptOrDecrypt();
             return returnKey;
@@ -68,14 +70,14 @@ namespace HW1
                     Console.WriteLine("-----------------");
                     Console.Write("Your choice:");
 
-                    _userSecondChoice = GetInput();
-                    if (!IsMenuInputValid(_userSecondChoice)) continue;
+                    _userSecondChoice = GetMenuInput();
+                    if (!IsMenuInputValid(_userSecondChoice, true)) continue;
                     
                     if (!CheckValidOptions(_userSecondChoice, "EDX"))
                     {
                         Console.WriteLine($"The choice {_userSecondChoice} is not valid");
                     }
-                } while (!CheckValidOptions(_userSecondChoice, "EDX"));
+                } while (!CheckValidOptions(_userSecondChoice, "EDX") || !IsMenuInputValid(_userSecondChoice, false));
 
                 if (_userSecondChoice.Equals("X")) return MenuKey.Back;
                 
@@ -110,15 +112,15 @@ namespace HW1
                 Console.WriteLine("-----------------");
                 Console.Write("Your choice:");
 
-                _userContinue = GetInput();
-                if (!IsMenuInputValid(_userContinue)) continue;
+                _userContinue = GetMenuInput();
+                if (!IsMenuInputValid(_userContinue, true)) continue;
 
                 if (!CheckValidOptions(_userContinue, "YNX"))
                 {
                     Console.WriteLine($"The choice {_userContinue} is not valid");
                 }
 
-            } while (!CheckValidOptions(_userContinue, "YNX"));
+            } while (!CheckValidOptions(_userContinue, "YNX") || !IsMenuInputValid(_userContinue, false));
 
             return _userContinue switch
             {
@@ -134,32 +136,80 @@ namespace HW1
             return input.Length != 0 && options.Contains(input);
         }
         
-        private static string GetInput() //This function gets and returns the input or empty string in case of null
+        private static string GetMenuInput() //This function gets and returns the input or empty string in case of null
         {
             return Console.ReadLine()?.Trim().ToUpper() ?? "";
         }
         
-        private static bool IsMenuInputValid(string input) //Check if input is a valid menu choice
+        private static string GetTextInput(string targetField) //Check if input is a valid text. 
+        {
+            string input;
+            do
+            {
+                Console.WriteLine();
+                Console.Write("Please, enter " + targetField + ":");
+                input = Console.ReadLine()?.Trim() ?? "";
+                if (input.Length != 0) break;
+                Console.WriteLine("Your input is empty, Please try again and provide some text \n");
+                CheckFails();
+            } while (input.Length == 0);
+
+            _failsCount = 0;
+            return input;
+        }
+
+        private static void CheckFails()
+        {
+            if(_failsCount <= 10) _failsCount++;
+            switch (_failsCount)
+            {
+                case 1:
+                    Console.WriteLine("Please, try again");
+                    break;
+                case 2:
+                    Console.WriteLine("Read instructions carefully");
+                    break;
+                case 3:
+                    Console.WriteLine("Oh, you provided invalid input again. Try harder please ");
+                    break;
+                case 5:
+                    Console.WriteLine("Seriously, just provide me a valid input and I will continue my work");
+                    break;
+                case 8:
+                    Console.WriteLine("...");
+                    break;
+                case 9:
+                    Console.WriteLine("... ...");
+                    break;
+                case 10:
+                    Console.WriteLine("Okay, do whatever you want. I won't be commenting anything");
+                    break;
+            }
+        }
+        
+        private static bool IsMenuInputValid(string input, bool logError) //Check if input is a valid menu choice. 
         {
             Console.WriteLine();
             switch (input.Length)
             {
                 case 0:
-                    Console.WriteLine("Your input is empty, please try again");
-                    Console.WriteLine();
+                    if(logError) Console.WriteLine("Your input is empty, please try again \n");
+                    CheckFails();
                     return false;
                 case > 1:
-                    Console.WriteLine("Please, provide only one character");
-                    Console.WriteLine();
+                    if(logError) Console.WriteLine("Please, provide only one character");
+                    CheckFails();
                     return false;
             }
             if (int.TryParse(input, out _))
             {
-                Console.WriteLine("Numbers are not accepted, please try again");
+                if(logError) Console.WriteLine("Numbers are not accepted, please try again");
+                CheckFails();
                 return false;
             }
 
             Console.WriteLine();
+            _failsCount = 0;
             return true;
         }
         
@@ -181,16 +231,17 @@ namespace HW1
                 inputIsValid = int.TryParse(shiftString, out shiftAmount);
                 if (!inputIsValid)
                 {
-                    Console.WriteLine($"The shift of '{shiftString}' is not a valid input!");
+                    Console.WriteLine($"The shift of '{shiftString}' is not a valid input! Provide only numbers");
+                    CheckFails();
                 }
             } while (!inputIsValid);
 
+            _failsCount = 0;
             shiftAmount %= Base64Alphabet.Length;
 
             Console.WriteLine($"Cesar shift amount: {shiftAmount}");
 
-            Console.Write("Please enter plaintext:");
-            var plaintext = Console.ReadLine() ?? "";
+            var plaintext = GetTextInput("plaintext");
             
             var utf8 = new UTF8Encoding();
             var utf8Bytes = utf8.GetBytes(plaintext);
@@ -231,22 +282,20 @@ namespace HW1
                 Console.Write("Please input shift amount (enter C to cancel):");
                 var shiftString = Console.ReadLine()?.Trim().ToUpper();
 
-                // bail out
-                if (shiftString == "C") return "";
-                
                 inputIsValid = int.TryParse(shiftString, out shiftAmount);
                 if (!inputIsValid)
                 {
-                    Console.WriteLine($"The shift of '{shiftString}' is not a valid input!");
+                    Console.WriteLine($"The shift of '{shiftString}' is not a valid input! Provide only numbers");
+                    CheckFails();
                 }
             } while (!inputIsValid);
 
+            _failsCount = 0;
             shiftAmount = shiftAmount % Base64Alphabet.Length;
 
             Console.WriteLine($"Cesar shift amount: {shiftAmount}");
 
-            Console.Write("Please enter ciphertext:");
-            var ciphertext = Console.ReadLine() ?? "";
+            var ciphertext = GetTextInput("ciphertext");
 
             var plaintext = "";
 
@@ -281,24 +330,22 @@ namespace HW1
 
             do
             {
-                Console.Write("Please input the key (enter C to cancel):");
+                Console.Write("Please input the key:");
                 var shiftString = Console.ReadLine()?.Trim();
-
-                // bail out
-                if (shiftString == "C") return "";
-
+                
                 inputIsValid = IsBase64Chars(shiftString);
                 secretKey = shiftString;
                 if (!inputIsValid)
                 {
-                    Console.WriteLine($"The key of '{shiftString}' is not a valid input!");
+                    Console.WriteLine($"The key of '{shiftString}' is not a valid input! Provide only English letters and numbers");
+                    CheckFails();
                 }
             } while (!inputIsValid);
-            
+
+            _failsCount = 0;
             Console.WriteLine($"Vigenere secret key: {secretKey}");
 
-            Console.Write("Please enter plaintext:");
-            var plaintext = Console.ReadLine() ?? "";
+            var plaintext = GetTextInput("plaintext");
 
             var utf8 = new UTF8Encoding();
             var utf8Bytes = utf8.GetBytes(plaintext);
@@ -349,14 +396,16 @@ namespace HW1
                 secretKey = shiftString;
                 if (!inputIsValid)
                 {
-                    Console.WriteLine($"The key of '{shiftString}' is not a valid input!");
+                    Console.WriteLine($"The key of '{shiftString}' is not a valid input! Provide only English letters and numbers");
+                    CheckFails();
                 }
             } while (!inputIsValid);
-            
+
+            _failsCount = 0;
             Console.WriteLine($"Vigenere secret key: {secretKey}");
 
             Console.Write("Please enter ciphertext:");
-            var ciphertext = Console.ReadLine() ?? "";
+            var ciphertext = GetTextInput("ciphertext");
             var extendedSecretKey = ExtendKey(secretKey, ciphertext);
 
             var plaintext = "";
@@ -395,7 +444,7 @@ namespace HW1
             }
             catch (Exception)
             {
-                Console.WriteLine("Looks like your ciphertext is wrong");
+                Console.WriteLine("Looks like your ciphertext is wrong. I could not decrypt it. Please, try again");
                 return (false, "");    
             }
 
@@ -404,6 +453,11 @@ namespace HW1
         private static bool IsBase64Chars(string base64) //Checks if a string contains only base64 characters
         {
             base64 = base64.Trim();
+            if (base64.Length == 0)
+            {
+                Console.WriteLine("Input is empty");
+                return false;
+            }
             return Regex.IsMatch(base64, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
         }
 
