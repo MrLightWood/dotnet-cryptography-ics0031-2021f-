@@ -135,6 +135,8 @@ namespace HW1
 
         private static bool CheckValidOptions(string input, string options) //This function checks if the key is valid for current menu options
         {
+            if (input.Length != 1) return false;
+            
             foreach(var chr in options)
             {
                 if (input.Length != 1) continue;
