@@ -220,20 +220,17 @@ namespace HW1
             _failsCount = 0;
             return true;
         }
-        
-        private static string CaesarEncrypt()
-        {
-            Console.WriteLine("========== Cesar Encryption ===========");
 
+        private static (int, bool) GetCaesarShiftAmount()
+        {
             bool inputIsValid;
             int shiftAmount;
-
             do
             {
                 Console.Write("Please input shift amount (enter C to cancel):");
                 var shiftString = Console.ReadLine()?.Trim();
                 
-                if (shiftString is "C" or "c") return "";
+                if (shiftString is "C" or "c") return (0, false);
                 
                 inputIsValid = int.TryParse(shiftString, out shiftAmount);
                 if (!inputIsValid)
@@ -243,6 +240,20 @@ namespace HW1
                 }
             } while (!inputIsValid);
 
+            return (shiftAmount, true);
+        }
+        
+        private static string CaesarEncrypt()
+        {
+            Console.WriteLine("========== Cesar Encryption ===========");
+
+            bool inputIsValid;
+            int shiftAmount;
+
+            (shiftAmount, inputIsValid) = GetCaesarShiftAmount();
+
+            if (!inputIsValid) return "";
+            
             _failsCount = 0;
             shiftAmount %= Base64Alphabet.Length;
 
@@ -284,20 +295,9 @@ namespace HW1
             bool inputIsValid;
             int shiftAmount;
 
-            do
-            {
-                Console.Write("Please input shift amount (enter C to cancel):");
-                var shiftString = Console.ReadLine()?.Trim().ToUpper();
+            (shiftAmount, inputIsValid) = GetCaesarShiftAmount();
 
-                if (shiftString is "C" or "c") return "";
-                
-                inputIsValid = int.TryParse(shiftString, out shiftAmount);
-                if (!inputIsValid)
-                {
-                    Console.WriteLine($"The shift of '{shiftString}' is not a valid input! Provide only numbers");
-                    CheckFails();
-                }
-            } while (!inputIsValid);
+            if (!inputIsValid) return "";
 
             _failsCount = 0;
             shiftAmount = shiftAmount % Base64Alphabet.Length;
@@ -330,13 +330,11 @@ namespace HW1
             (isCipherTextOkay, plaintext) = Base64Decode(plaintext);
             return !isCipherTextOkay ? "" : plaintext;
         }
-        private static string VigenereEncrypt()
-        {
-            Console.WriteLine("========== Vigenere Encryption ===========");
 
+        private static string GetVigenereKey()
+        {
             bool inputIsValid;
             string secretKey;
-
             do
             {
                 Console.Write("Please input the key:");
@@ -350,6 +348,14 @@ namespace HW1
                     CheckFails();
                 }
             } while (!inputIsValid);
+
+            return secretKey;
+        } 
+        
+        private static string VigenereEncrypt()
+        {
+            Console.WriteLine("========== Vigenere Encryption ===========");
+            var secretKey = GetVigenereKey();
 
             _failsCount = 0;
             Console.WriteLine($"Vigenere secret key: {secretKey}");
@@ -389,31 +395,11 @@ namespace HW1
         private static string VigenereDecrypt()
         {
             Console.WriteLine("========== Vigenere Decryption ===========");
-
-            bool inputIsValid;
-            string secretKey;
-
-            do
-            {
-                Console.Write("Please input the key (enter C to cancel):");
-                var shiftString = Console.ReadLine()?.Trim();
-
-                // bail out
-                if (shiftString == "C") return "";
-
-                inputIsValid = IsBase64Chars(shiftString);
-                secretKey = shiftString;
-                if (!inputIsValid)
-                {
-                    Console.WriteLine($"The key of '{shiftString}' is not a valid input! Provide only English letters and numbers");
-                    CheckFails();
-                }
-            } while (!inputIsValid);
+            var secretKey = GetVigenereKey();
 
             _failsCount = 0;
             Console.WriteLine($"Vigenere secret key: {secretKey}");
-
-            Console.Write("Please enter ciphertext:");
+            
             var ciphertext = GetTextInput("ciphertext");
             var extendedSecretKey = ExtendKey(secretKey, ciphertext);
 
