@@ -62,7 +62,9 @@ namespace HW1
             {
                 do
                 {
-                    Console.WriteLine("-----------------");
+                    Console.WriteLine();
+                    var algorithm = _userFirstChoice.Equals("C") ? "Caesar" : "Vigenere";
+                    Console.WriteLine($"-------- {algorithm} algorithm --------");
                     Console.WriteLine("Do you want to Encrypt or Decrypt: ");
                     Console.WriteLine("E) Encrypt");
                     Console.WriteLine("D) Decrypt");
@@ -90,8 +92,7 @@ namespace HW1
                     "VD" => VigenereDecrypt(),
                     _ => ""
                 };
-                Console.WriteLine();
-                Console.WriteLine($"Your encrypted text is: {algorithmOutput}");
+                if(algorithmOutput.Length != 0) Console.WriteLine($"Your output text is: {algorithmOutput}");
                 Console.WriteLine();
                 shouldContinue = MenuContinueAlgorithm();
             } while (shouldContinue is not(MenuKey.ToMainMenu or MenuKey.Exit));
@@ -103,6 +104,7 @@ namespace HW1
         {
             do
             {
+                Console.WriteLine();
                 var algorithm = _userFirstChoice.Equals("C") ? "Caesar" : "Vigenere";
                 Console.WriteLine("-----------------");
                 Console.WriteLine($"Do you want to Continue with {algorithm} algorithm?");
@@ -133,7 +135,13 @@ namespace HW1
 
         private static bool CheckValidOptions(string input, string options) //This function checks if the key is valid for current menu options
         {
-            return input.Length != 0 && options.Contains(input);
+            foreach(var chr in options)
+            {
+                if (input.Length != 1) continue;
+                if (input[0].Equals(chr)) return true;
+            }
+
+            return false;
         }
         
         private static string GetMenuInput() //This function gets and returns the input or empty string in case of null
@@ -146,11 +154,10 @@ namespace HW1
             string input;
             do
             {
-                Console.WriteLine();
                 Console.Write("Please, enter " + targetField + ":");
                 input = Console.ReadLine()?.Trim() ?? "";
                 if (input.Length != 0) break;
-                Console.WriteLine("Your input is empty, Please try again and provide some text \n");
+                Console.WriteLine("Your input is empty, Please try again and provide some text");
                 CheckFails();
             } while (input.Length == 0);
 
@@ -185,15 +192,15 @@ namespace HW1
                     Console.WriteLine("Okay, do whatever you want. I won't be commenting anything");
                     break;
             }
+            Console.WriteLine();
         }
         
         private static bool IsMenuInputValid(string input, bool logError) //Check if input is a valid menu choice. 
         {
-            Console.WriteLine();
             switch (input.Length)
             {
                 case 0:
-                    if(logError) Console.WriteLine("Your input is empty, please try again \n");
+                    if(logError) Console.WriteLine("Your input is empty, please try again");
                     CheckFails();
                     return false;
                 case > 1:
@@ -208,7 +215,6 @@ namespace HW1
                 return false;
             }
 
-            Console.WriteLine();
             _failsCount = 0;
             return true;
         }
@@ -224,8 +230,7 @@ namespace HW1
             {
                 Console.Write("Please input shift amount (enter C to cancel):");
                 var shiftString = Console.ReadLine()?.Trim();
-
-                // bail out
+                
                 if (shiftString is "C" or "c") return "";
                 
                 inputIsValid = int.TryParse(shiftString, out shiftAmount);
@@ -282,6 +287,8 @@ namespace HW1
                 Console.Write("Please input shift amount (enter C to cancel):");
                 var shiftString = Console.ReadLine()?.Trim().ToUpper();
 
+                if (shiftString is "C" or "c") return "";
+                
                 inputIsValid = int.TryParse(shiftString, out shiftAmount);
                 if (!inputIsValid)
                 {
