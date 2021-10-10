@@ -875,7 +875,7 @@ namespace HW2
             int nextPrime = 3;
             while (primes.Count < n)
             {
-                int sqrt = (int)Math.Sqrt(nextPrime);
+                int sqrt = (int)FloorSqrt((ulong)nextPrime);
                 bool isPrime = true;
                 for (int i = 0; primes[i] <= sqrt; i++)
                 {
