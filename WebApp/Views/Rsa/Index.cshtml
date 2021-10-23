@@ -1,0 +1,58 @@
+@model IEnumerable<Domain.RSA>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a> |
+    <a asp-action="Decrypt">Manual Decryption</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CipherText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.E)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.N)
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @{
+                    var text = item.CipherText.Length > 64 ? item.CipherText[..64] : item.CipherText[..item.CipherText.Length];
+                    text = text.Length == 64 ? text + "..." : text;
+                }
+                @Html.DisplayFor(modelItem => text)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.E)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.N)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+            <td>
+                <form asp-action="Decrypt">
+                    <input asp-for="@item.Id" type="hidden" name="Id" value="@item.Id">
+                    <input type="submit" value="Decrypt" class="btn btn-primary"/>
+                </form>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

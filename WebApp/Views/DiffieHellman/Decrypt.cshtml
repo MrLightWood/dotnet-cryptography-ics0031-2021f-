@@ -1,0 +1,48 @@
+@model Domain.DiffieHellman
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Decrypt</h1>
+
+<h4>RSA</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="P" class="control-label">1st prime number value</label>
+                <input asp-for="P" class="form-control" />
+                <span asp-validation-for="P" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Q" class="control-label">2nd prime number value</label>
+                <input asp-for="Q" class="form-control" />
+                <span asp-validation-for="Q" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserAInput" class="control-label">User A value</label>
+                <input asp-for="UserAInput" class="form-control" />
+                <span asp-validation-for="UserAInput" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserBInput" class="control-label">User B value</label>
+                <input asp-for="UserBInput" class="form-control" />
+                <span asp-validation-for="UserBInput" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Decrypt" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
+using static HW2.Utils;
 
 namespace HW2
 {
@@ -19,33 +18,24 @@ namespace HW2
                                               "abcdefghijklmnopqrstuvwxyz" + 
                                               "0123456789" + 
                                               "+/ ="; // base64 alphabet with space
-        private static readonly List<int> PrimesList = Program.GeneratePrimesNaive(100000);
+        private static readonly List<int> PrimesList = GeneratePrimesNaive(100000);
         
-        static void Mainp()
-        {
-            Console.WriteLine(crackRSA(5, 10142789312725007));
-            //var rsa = new RSA((ulong)PrimesList[5], (ulong)PrimesList[10]);
-            //rsa.printRSA();
+        public ulong N => n;
+        public ulong Phi => phi;
+        public ulong E => e;
+        public ulong D => d;
 
-            //var encryptedValue = 96;
-            //rsa.findPublicKey(rsa.getE(), rsa.enc(150));
-            //Console.WriteLine("Enc: " + rsa.enc(500));
-            //var enc = modpow(50, 3, 55);
-            //Console.WriteLine(enc);
-            //Console.WriteLine(modpow(enc, 27, 55));
+        public void setEvalue(ulong E)
+        {
+            this.e = E;
         }
         
+        public void setDvalue(ulong D)
+        {
+            this.d = D;
+        }
         public RSA() {}
 
-        public void printRSA()
-        {
-            Console.WriteLine("p: " + p);
-            Console.WriteLine("q: " + q);
-            Console.WriteLine("n: " + n);
-            Console.WriteLine("phi: " + phi);
-            Console.WriteLine("e: " + e);
-            Console.WriteLine("d: " + d);
-        }
         public RSA(ulong p, ulong q)
         {
             try
@@ -88,75 +78,13 @@ namespace HW2
         {
             return $"\n e: {this.e}\n n: {this.n}\n";
         }
-
-        private static ulong crackRSA(ulong e, ulong n)
-        {
-            var startingValue = Program.FloorSqrt(n);
-            ulong p = 0, q = 0, d = 0;
-            
-            for (var i = startingValue; i != 0; i--)
-            {
-                if (!Program.IsPrime(i)) continue;
-                if (n % i != 0) continue;
-                p = i;
-                break;
-            }
-
-            q = n / p;
-
-            d = generatePrivateKey(e, (p - 1) * (q - 1));
-            
-            return d;
-        }
         
-        /*
-        private ulong findPublicKey(ulong e, ulong encryptedValue)
-        {
-            ulong p = 0;
-            ulong q = 0;
-            ulong n = 0;
-            ulong phi = 0;
-            ulong d = 0;
-            
-            for (var i = 0; i < PrimesList.Count; i++)
-            {
-                p = (ulong)PrimesList[i];
-                for (var j = 0; j < PrimesList.Count; j++)
-                {
-                    q = (ulong)PrimesList[j];
-                    n = p * q;
-                    phi = (p - 1) * (q - 1);
-                    d = generatePrivateKey(e, phi);
-                    if (d == 27 && p == 5 && q == 11)
-                    {
-                        Console.WriteLine();
-                    }
-                    for (ulong k = 1; k < n; k++)
-                    {
-                        var num = modpow(k, e, n);
-                        
-                        if (num == encryptedValue)
-                        {
-                            if(modpow(encryptedValue, d, n) == k)
-                            {
-                                Console.WriteLine($"I found the value. The private key is {d} p is {p} q is {q}");
-                                return d;
-                            }
-                        }
-                    }
-                    
-                }    
-            }
-            
-            return 0;
-        }
-        */
         private ulong generatePublicKey(ulong phi)
         {
             ulong e;
-            for (e = Program.FloorSqrt(Program.FloorSqrt(phi)); e < phi; e++)
+            for (e = FloorSqrt(FloorSqrt(phi)); e < phi; e++)
             {
-                if (Program.Gcd(e, phi) == 1 && randomObject.Next(0, 101) % 2 == 0) // random is used to always create different e values
+                if (Gcd(e, phi) == 1 && randomObject.Next(0, 101) % 2 == 0) // random is used to always create different e values
                 {
                     break;
                 }
@@ -196,9 +124,8 @@ namespace HW2
             return inv;
         }
 
-        public string Encrypt(string input)
+        public (bool, string) Encrypt(string input)
         {
-            printRSA();
             ulong num = 0; //num
             ulong pNum = 0; //previous num
             
@@ -213,7 +140,7 @@ namespace HW2
                 }
                 catch (OverflowException)
                 {
-                    listOfEncryptedNumbers.Add(Program.Modpow(pNum, e, n));
+                    listOfEncryptedNumbers.Add(Modpow(pNum, e, n));
                     i--;
                     num = 0;
                     pNum = 0;
@@ -222,7 +149,7 @@ namespace HW2
                 
                 if (num > n)
                 {
-                    listOfEncryptedNumbers.Add(Program.Modpow(pNum, e, n));
+                    listOfEncryptedNumbers.Add(Modpow(pNum, e, n));
                     i--;
                     num = 0;
                     pNum = 0;
@@ -233,7 +160,7 @@ namespace HW2
                 
                 if (i == input.Length - 1)
                 {
-                    listOfEncryptedNumbers.Add(Program.Modpow(pNum, e, n));
+                    listOfEncryptedNumbers.Add(Modpow(pNum, e, n));
                 }
             }
             
@@ -244,10 +171,10 @@ namespace HW2
                 ciphertext += Convert.ToBase64String(BitConverter.GetBytes(item));
             }
 
-            return ciphertext;
+            return (true, ciphertext);
         }
         
-        public string Decrypt(string input)
+        public (bool, string) Decrypt(string input)
         {
             List<string> listOfCipherTexts = new List<string>();
             string plaintext = "";
@@ -268,7 +195,7 @@ namespace HW2
 
 
                     var num = BitConverter.ToUInt64(base64EncodedBytes, 0);
-                    num = Program.Modpow(num, d, n);
+                    num = Modpow(num, d, n);
                     string tempText = "";
 
                     while (num > 0)
@@ -285,29 +212,11 @@ namespace HW2
             catch (Exception)
             {
                 Console.WriteLine("Looks like your ciphertext is wrong. I could not decrypt it. Please, try again");
-                return "";
+                return (false, "");
             }
 
-            return plaintext;
+            return (true, plaintext);
         }
-
-        /*
-        public static string ConvertUlong(ulong number)
-        {
-            var validCharacters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@#$%^&()_-";
-            char[] charArray = validCharacters.ToCharArray();
-            var buffer = new StringBuilder();
-            var quotient = number;
-            ulong remainder;
-            while (quotient != 0)
-            {
-                remainder = quotient % (ulong)charArray.LongLength;
-                quotient = quotient / (ulong)charArray.LongLength;
-                buffer.Insert(0, charArray[remainder].ToString());
-            }
-            return buffer.ToString();
-        }
-        */
-
+        
     }
 }

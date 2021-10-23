@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Output";
+}
+
+<h1>Output</h1>
+<p class="text-danger">@ViewData["Error"]</p>
+<div>
+    <h4>@ViewData["Header"]</h4>
+    <hr />
+    <span><strong>Your @ViewData["OutputDescription"] is:</strong> @ViewData["OutputText"]</span>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

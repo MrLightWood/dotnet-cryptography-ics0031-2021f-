@@ -1,0 +1,64 @@
+@model Domain.RSA
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>RSA</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="P" class="control-label"></label>
+                <input asp-for="P" class="form-control" />
+                <span asp-validation-for="P" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Q" class="control-label"></label>
+                <input asp-for="Q" class="form-control" />
+                <span asp-validation-for="Q" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="N" class="control-label"></label>
+                <input asp-for="N" class="form-control" />
+                <span asp-validation-for="N" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phi" class="control-label"></label>
+                <input asp-for="Phi" class="form-control" />
+                <span asp-validation-for="Phi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="E" class="control-label"></label>
+                <input asp-for="E" class="form-control" />
+                <span asp-validation-for="E" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="D" class="control-label"></label>
+                <input asp-for="D" class="form-control" />
+                <span asp-validation-for="D" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CipherText" class="control-label"></label>
+                <input asp-for="CipherText" class="form-control" />
+                <span asp-validation-for="CipherText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

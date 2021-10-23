@@ -1,0 +1,54 @@
+@model Domain.DiffieHellman
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>DiffieHellman</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="P" class="control-label"></label>
+                <input asp-for="P" class="form-control" />
+                <span asp-validation-for="P" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Q" class="control-label"></label>
+                <input asp-for="Q" class="form-control" />
+                <span asp-validation-for="Q" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserAInput" class="control-label"></label>
+                <input asp-for="UserAInput" class="form-control" />
+                <span asp-validation-for="UserAInput" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserBInput" class="control-label"></label>
+                <input asp-for="UserBInput" class="form-control" />
+                <span asp-validation-for="UserBInput" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SharedKey" class="control-label"></label>
+                <input asp-for="SharedKey" class="form-control" />
+                <span asp-validation-for="SharedKey" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

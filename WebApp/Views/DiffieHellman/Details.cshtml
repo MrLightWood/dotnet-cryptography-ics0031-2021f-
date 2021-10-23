@@ -1,0 +1,53 @@
+@model Domain.DiffieHellman
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>DiffieHellman</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.P)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.P)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Q)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Q)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.UserAInput)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.UserAInput)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.UserBInput)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.UserBInput)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SharedKey)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SharedKey)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdentityUser)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdentityUser.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

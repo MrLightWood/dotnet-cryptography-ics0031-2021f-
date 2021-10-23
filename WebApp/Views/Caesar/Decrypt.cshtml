@@ -1,0 +1,38 @@
+@model Domain.Caesar
+
+@{
+    ViewData["Title"] = "Decrypt";
+}
+
+<h1>Decrypt</h1>
+
+<h4>Caesar</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Decrypt">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ShiftAmount" class="control-label">Shift amount</label>
+                <input asp-for="ShiftAmount" class="form-control" />
+                <span asp-validation-for="ShiftAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CipherText" class="control-label">Cipher text</label>
+                <input asp-for="CipherText" class="form-control" />
+                <span asp-validation-for="CipherText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Decrypt" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

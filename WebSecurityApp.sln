@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HW2", "HW2\HW2.csproj", "{F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{5DBBF927-222C-4942-99C4-1E24254163B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{43D36849-2A91-4A97-8078-4759B7279F2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{E222B4CB-E4B3-48CA-8751-036ADB7A4F23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{5DBBF927-222C-4942-99C4-1E24254163B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DBBF927-222C-4942-99C4-1E24254163B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DBBF927-222C-4942-99C4-1E24254163B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43D36849-2A91-4A97-8078-4759B7279F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43D36849-2A91-4A97-8078-4759B7279F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43D36849-2A91-4A97-8078-4759B7279F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43D36849-2A91-4A97-8078-4759B7279F2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E222B4CB-E4B3-48CA-8751-036ADB7A4F23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E222B4CB-E4B3-48CA-8751-036ADB7A4F23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E222B4CB-E4B3-48CA-8751-036ADB7A4F23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E222B4CB-E4B3-48CA-8751-036ADB7A4F23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
